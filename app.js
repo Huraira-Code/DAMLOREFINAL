@@ -11,7 +11,12 @@ import { authorizeAdmin } from "./middleware/authorizeAdmin.js";
 const app = express();
 dotenv.config();
 
-app.use(cors()); // ✅ Allow CORS from all origins
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true, // if using cookies or HTTP auth
+  })
+); // ✅ Allow CORS from all origins
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
