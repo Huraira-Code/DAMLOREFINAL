@@ -46,7 +46,7 @@ const handleUserLogin = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ msg: "email or password is missing" });
     }
-
+    console.log("after email and password check");
     const user = await User.findOne({
       email,
     });
