@@ -39,6 +39,7 @@ const handleUserSignup = async (req, res) => {
 };
 
 const handleUserLogin = async (req, res) => {
+  console.log("Login attempt", req.body);
   try {
     const { email, password } = req.body;
 
@@ -54,6 +55,7 @@ const handleUserLogin = async (req, res) => {
     const { _id, role } = user;
 
     if (user) {
+      console.log("User found:", user);
       const validated = await bcrypt.compare(password, user.password);
 
       if (validated) {
@@ -63,7 +65,7 @@ const handleUserLogin = async (req, res) => {
 
         return res
           .status(200)
-          .json({ msg: "successfully Login", token: token });
+          .json({ msg: "successfully Login", token: token, role: role });
       } else {
         return res.status(401).json({
           status: "failed",
@@ -90,6 +92,7 @@ const handleHomePage = async (req, res) => {
 };
 
 const handleUploadImage = async (req, res) => {
+  console.log("abcbdsahjhf");
   try {
     const { listId } = req.body;
     const files = req.files;
@@ -105,16 +108,29 @@ const handleUploadImage = async (req, res) => {
     for (const file of files) {
       const cloudinaryResult = await uploadOnCloudinary(file.path);
       if (cloudinaryResult) {
+        console.log({
+          imageURL: cloudinaryResult.url,
+          sku: req.body.sku,
+          barcode: req.body.barcode,
+          gender: req.body.gender,
+          assetypes: req.body.assetypes,
+          merchandisingclass: req.body.merchandisingclass,
+          arrival: req.body.arrival,
+        });
         const imageData = await ImageModel.create({
           imageURL: cloudinaryResult.url,
+          sku: req.body.sku,
+          barcode: req.body.barcode,
+          gender: req.body.gender,
+          assetypes: req.body.assetypes,
+          merchandisingclass: req.body.merchandisingclass,
+          arrival: req.body.arrival,
         });
-
         await ShootingList.findByIdAndUpdate(
           listId,
           { $push: { imageIDs: imageData._id } },
           { new: true }
         );
-
         uploadedImages.push(imageData);
       }
     }
@@ -170,15 +186,24 @@ const handleImageDelete = async (req, res) => {
 
 const createShootingList = async (req, res) => {
   try {
-    const { name, sku, barcode, gender, size, dimension, arrival, sessionId } =
-      req.body;
+    const {
+      name,
+      sku,
+      barcode,
+      gender,
+      merchandisingclass,
+      assetypes,
+      arrival,
+      sessionId,
+    } = req.body;
+    console.log(req.body);
     const newShootingList = new ShootingList({
       name,
       sku,
       barcode,
       gender,
-      size,
-      dimension,
+      merchandisingclass,
+      assetypes,
       arrival,
     });
     console.log(newShootingList);
@@ -268,7 +293,9 @@ const createShootingSession = async (req, res) => {
 
 const getAllShootingSession = async (req, res) => {
   try {
-    const shootingSessions = await ShootingSession.find({}).populate("shootingListIDs");
+    const shootingSessions = await ShootingSession.find({}).populate(
+      "shootingListIDs"
+    );
 
     res.status(200).json({
       status: "Succes",
@@ -299,19 +326,21 @@ const deleteShootingSession = async (req, res) => {
   }
 };
 
+// Recommended change for your backend controller
 const handleSendImage = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // Get ID from URL parameters
+    const { status } = req.body; // Get status from request body
 
     const imageData = await ImageModel.findByIdAndUpdate(
-      id,
-      { status: "Delivered" },
+      id, // Use the ID from the URL
+      { status: status }, // Update with the status from the body
       { new: true }
     );
 
     res
       .status(200)
-      .json({ status: "Succes", msg: "Successfully Sent Image", imageData });
+      .json({ status: "Success", msg: "Successfully Sent Image", imageData });
   } catch (error) {
     res.status(500).json({ status: "failed", msg: error.message });
   }
@@ -325,8 +354,12 @@ const showShootingSessionsToUser = async (req, res) => {
 
     const shootingSession = await ShootingSession.find({
       assignedUser: verify._id,
+    }).populate({
+      path: "shootingListIDs",
+      populate: {
+        path: "imageIDs", // this assumes `imageIDs` is a reference field in the ShootingList model
+      },
     });
-
     if (!shootingSession) {
       return res
         .status(400)

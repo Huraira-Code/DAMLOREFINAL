@@ -56,7 +56,7 @@ adminRouter.route("/images/:listId").get(getAllImagesOfList);
 adminRouter.route("/deletesession/:id").delete(deleteShootingSession);
 
 // Send Image Route
-adminRouter.route("/send/:id").patch(handleSendImage);
+  adminRouter.route("/send/:id").put(handleSendImage);
 
 // Get All Users Route
 adminRouter.route("/users").get(getAllUsers);

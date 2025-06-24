@@ -10,10 +10,20 @@ const imageModelSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      default: "Pending",
-      enum: ["Pending", "Delivered"],
+      default: "SHOT",
+      enum: ["SHOT", "IN PROGRESS", "APPROVED", "DELIVERED"],
     },
-
+    sku: {
+      type: String,
+    },
+    barcode: { type: String },
+    gender: { type: String },
+    merchandisingclass: { type: String },
+    assetypes: {
+      type: String,
+      enum: ["On Model", "Ghost", "Still Life", "Video"], // Corrected! Each value is a separate string.
+    },
+    arrival: { type: String },
     comments: [
       {
         userId: {

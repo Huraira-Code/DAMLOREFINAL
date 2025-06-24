@@ -11,8 +11,11 @@ const shootingListSchema = new mongoose.Schema(
     },
     barcode: { type: String },
     gender: { type: String },
-    size: { type: String },
-    dimension: { type: String },
+    merchandisingclass: { type: String },
+    assetypes: {
+      type: String,
+      enum: ["On Model", "Ghost", "Still Life", "Video"], // Corrected! Each value is a separate string.
+    },
     arrival: { type: String },
     imageIDs: [
       {
