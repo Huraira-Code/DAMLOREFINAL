@@ -292,10 +292,16 @@ const createShootingSession = async (req, res) => {
 };
 
 const getAllShootingSession = async (req, res) => {
+  console.log("Fetching all shooting sessions");
+  // Fetch all shooting sessions and populate the shootingListIDs field with imageIDs
   try {
-    const shootingSessions = await ShootingSession.find({}).populate(
-      "shootingListIDs"
-    );
+    const shootingSessions = await ShootingSession.find({}).populate({
+      path: "shootingListIDs",
+      populate: {
+        path: "imageIDs", // Populate the 'imageIDs' field within each 'shootingListID'
+        model: "imageModel", // Specify the model for 'imageIDs' (assuming your Image model is named 'Image')
+      },
+    });
 
     res.status(200).json({
       status: "Succes",
