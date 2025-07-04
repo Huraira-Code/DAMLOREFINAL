@@ -471,6 +471,42 @@ const getAllImagesOfList = async (req, res) => {
   }
 };
 
+const updateImageMetadata = async (req, res) => {
+  console.log("Updating image metadata", req.body);
+  try {
+    const { imageId } = req.params;
+    const { assetType, merchandisingClass, sku, barcode } = req.body;
+
+    // Optional: Add authorization/authentication logic here if needed
+    // e.g., check if the user has permission to update this image
+
+    const updatedImage = await ImageModel.findByIdAndUpdate(
+      imageId,
+      {
+        assetType,
+        merchandisingClass,
+        sku,
+        barcode,
+        // Add any other fields you want to update
+      },
+      { new: true, runValidators: true } // `new: true` returns the updated document, `runValidators: true` runs schema validators
+    );
+
+    if (!updatedImage) {
+      return res.status(404).json({ status: "failed", msg: "Image not found" });
+    }
+
+    res.status(200).json({
+      status: "success",
+      msg: "Image metadata updated successfully!",
+      imageData: updatedImage,
+    });
+  } catch (error) {
+    console.error("Error updating image metadata:", error);
+    res.status(500).json({ status: "failed", msg: error.message });
+  }
+};
+
 const handleUpdateSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -565,5 +601,6 @@ export {
   getAllImagesOfList,
   handleUpdateSession,
   handleUpdateList,
+  updateImageMetadata,
   handleRejectImage,
 };

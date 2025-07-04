@@ -15,9 +15,9 @@ import {
   getAllUsers,
   handleUpdateSession,
   handleUpdateList,
+  updateImageMetadata,
 } from "../controllers/controller.js";
 import { upload } from "../middleware/multer.js";
-
 const adminRouter = express.Router();
 
 // Home Page
@@ -63,6 +63,7 @@ adminRouter.route("/users").get(getAllUsers);
 
 // Get All Images Of A List Route
 adminRouter.route("/images/:listId").get(getAllImagesOfList);
+adminRouter.route("/images/:imageId").put(updateImageMetadata);
 
 // Update Session Route
 adminRouter.route("/session/:sessionId").patch(handleUpdateSession);
