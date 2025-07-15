@@ -11,13 +11,26 @@ const shootingSessionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-
-    shootingListIDs: [
+    barcode: { type: String },
+    gender: { type: String },
+    merchandisingclass: { type: String },
+    assetypes: {
+      type: String,
+      enum: ["On Model", "Ghost", "Still Life", "Video"], // Corrected! Each value is a separate string.
+    },
+    arrival: { type: String },
+    imageIDs: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "shootingList",
+        ref: "imageModel",
       },
     ],
+    // shootingListIDs: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "shootingList",
+    //   },
+    // ],
   },
   { timestamps: true }
 );

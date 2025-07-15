@@ -3,20 +3,22 @@ import {
   handleHomePage,
   handleUploadImage,
   handleImageDelete,
-  createShootingList,
-  deleteShootingList,
+  // createShootingList,
+  // deleteShootingList,
   createShootingSession,
   deleteShootingSession,
   addNotesToImage,
   handleSendImage,
   getAllShootingSession,
-  getAllShootingList,
-  getAllImagesOfList,
+  // getAllShootingList,
   getAllUsers,
   handleUpdateSession,
-  handleUpdateList,
+  // handleUpdateList,
   updateImageMetadata,
+  addImageVersion,
 } from "../controllers/controller.js";
+
+
 import { upload } from "../middleware/multer.js";
 const adminRouter = express.Router();
 
@@ -26,22 +28,23 @@ adminRouter.route("/home").get(handleHomePage);
 // Image Post Route
 adminRouter
   .route("/upload")
-  .post(upload.array("files", 10), handleUploadImage);
+  .post(upload.array("files", 1000), handleUploadImage);
 
+adminRouter
+  .route("/addImage")
+  .post(upload.single("files"), addImageVersion);
 // Add Notes
 adminRouter.route("/notes/:id").post(addNotesToImage);
 
 // Image Delete Route
-adminRouter.route("/deleteimage/:listId/:id").delete(handleImageDelete);
+adminRouter.route("/deleteimage/:sessionId/:id").delete(handleImageDelete);
 
 // Create Shooting List Route
-adminRouter.route("/createlist").post(createShootingList);
+// adminRouter.route("/createlist").post(createShootingList);
 
 // Get All Shooting List Route
-adminRouter.route("/:id/lists").get(getAllShootingList);
+// adminRouter.route("/:id/lists").get(getAllShootingList);
 
-// Delete Shooting List Route
-adminRouter.route("/deletelist/:sessionId/:id").delete(deleteShootingList);
 
 // Create Shooting Session Route
 adminRouter.route("/createsession").post(createShootingSession);
@@ -50,7 +53,7 @@ adminRouter.route("/createsession").post(createShootingSession);
 adminRouter.route("/sessions").get(getAllShootingSession);
 
 // Get All Images of List Route
-adminRouter.route("/images/:listId").get(getAllImagesOfList);
+// adminRouter.route("/images/:listId").get(getAllImagesOfList);
 
 // Delete Shooting Session Route
 adminRouter.route("/deletesession/:id").delete(deleteShootingSession);
@@ -62,12 +65,12 @@ adminRouter.route("/deletesession/:id").delete(deleteShootingSession);
 adminRouter.route("/users").get(getAllUsers);
 
 // Get All Images Of A List Route
-adminRouter.route("/images/:listId").get(getAllImagesOfList);
+// adminRouter.route("/images/:listId").get(getAllImagesOfList);
 adminRouter.route("/images/:imageId").put(updateImageMetadata);
 
 // Update Session Route
 adminRouter.route("/session/:sessionId").patch(handleUpdateSession);
 // Update Session Route
-adminRouter.route("/list/:listId").patch(handleUpdateList);
+// adminRouter.route("/list/:listId").patch(handleUpdateList);
 
 export default adminRouter;
