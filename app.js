@@ -10,9 +10,15 @@ import { authorizeAdmin } from "./middleware/authorizeAdmin.js";
 
 const app = express();
 dotenv.config();
+const corsOptions = {
+  origin: 'http://localhost:3000', // ✅ Allow requests from your frontend's origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // ✅ Specify allowed HTTP methods
+  credentials: true, // ✅ Allow cookies to be sent with requests (if needed for authentication)
+  optionsSuccessStatus: 204 // ✅ Set the status code for successful OPTIONS preflight requests
+};
 
-app.use(cors()); // ✅ Allow CORS from all origins
-
+// Apply the CORS middleware with the defined options
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
