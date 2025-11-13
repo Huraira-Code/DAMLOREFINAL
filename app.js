@@ -10,12 +10,28 @@ import { authorizeAdmin } from "./middleware/authorizeAdmin.js";
 
 const app = express();
 dotenv.config();
+const allowedOrigins = [
+  'https://glittery-pastelito-13a69e.netlify.app',
+  'https://oneframedam.oneframeagency.com',
+  'http://oneframedam.oneframeagency.com',
+  'http://localhost:3000', // for local development
+];
+
 const corsOptions = {
-  origin: 'https://glittery-pastelito-13a69e.netlify.app', // ✅ Allow requests from your frontend's origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // ✅ Specify allowed HTTP methods
-  credentials: true, // ✅ Allow cookies to be sent with requests (if needed for authentication)
-  optionsSuccessStatus: 204 // ✅ Set the status code for successful OPTIONS preflight requests
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS: ' + origin));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
 };
+
 
 // Apply the CORS middleware with the defined options
 app.use(cors(corsOptions));
@@ -32,4 +48,5 @@ app.use("/user/", authenticationMiddleware, userRouter);
 app.listen(PORT, () =>
   console.log(`Server is running at http://localhost:${PORT}`)
 );
+
 
