@@ -11,7 +11,7 @@ import { authorizeAdmin } from "./middleware/authorizeAdmin.js";
 const app = express();
 dotenv.config();
 const corsOptions = {
-  origin: 'http://localhost:3000', // ✅ Allow requests from your frontend's origin
+  origin: 'https://glittery-pastelito-13a69e.netlify.app', // ✅ Allow requests from your frontend's origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // ✅ Specify allowed HTTP methods
   credentials: true, // ✅ Allow cookies to be sent with requests (if needed for authentication)
   optionsSuccessStatus: 204 // ✅ Set the status code for successful OPTIONS preflight requests
@@ -32,3 +32,4 @@ app.use("/user/", authenticationMiddleware, userRouter);
 app.listen(PORT, () =>
   console.log(`Server is running at http://localhost:${PORT}`)
 );
+
